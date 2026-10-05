@@ -1,7 +1,7 @@
 // Ashton Tolman
 // RCET3373
 // Lab5PICpt1
-// https://github.com/Ashton-Tolman/Semester-5-Lab-5.git
+// https://github.com/Ashton-Tolman/Semester-5-Lab-7.git
 // linker code:-Wl,-presetVect=0000h,-pisrVect=0004h,-pcode=0008h
 
 ; PIC16F883 Configuration Bit Settings
@@ -46,61 +46,77 @@ PSECT code,class=CODE,delta=2
 
 Setup:
     ; add device setup here
-    BSF  0x03, 06    ;
-    BSF  0x03, 05    ; Set bank 3 active
-    CLRF 0x189	    ; ANSELH analog/digital select portB pins as digital
-    CLRF 0x188	    ; ANSEL analog/digital select portA pins as digital
+    BSF  0x03, 06   ;
+    BSF  0x03, 05   ; Set bank 3 active
+    CLRF ANSEL      ; Clear analog selections
+    CLRF ANSELH     ; Clear high analog selections
+    BSF ANSEL,0     ; AN0 / RA0 = analog input
     
-    BSF  0x03, 06    ;
+    
+    BSF  0x03, 06   ;
     BCF  0x03, 5    ; Set bank 2 active
     BSF  0x09, 1    ; Turn T1G-not function off
     
-    BCF  0x03, 06    ;
-    BSF  0x03, 05    ; Set bank 1 active 
-    CLRF 0x85	    ; TrisA sets all portA pins as outputs
-    MOVLW 0x01	    ; Make W all highs
-    MOVWF 0x86	    ; Move W to TrisB
-    CLRF 0x87	    ; TrisC sets all portC pins as outputs
-    BCF 0x81, 6	    ; Make interrupts trigger on falling edges
-    BCF 0x81, 7	    ; Give PortB weak pull ups
+    BCF  0x03, 06   ;
+    BSF  0x03, 05   ; Set bank 1 active 
+    MOVLW 0x01	    ;
+    MOVWF 0x85      ; TRISA: RA0 input, other PORTA pins outputs
+    CLRF 0x86       ; TRISB: PORTB outputs
+    CLRF 0x87       ; TRISC: PORTC outputs
+    CLRF ADCON1     ; Clear ADCON1
+    BSF ADCON1,7    ; ADFM = 1, right justify result
+    BCF ADCON1,5    ; VREF- = VSS
+    BCF ADCON1,4    ; VREF+ = VDD
 
 		    
-    BCF  0x03, 06    ;
-    BCF  0x03, 05    ; Set bank 0 active
+    BCF  0x03, 06   ;
+    BCF  0x03, 05   ; Set bank 0 active
     CLRF 0x06	    ; clear port B
     CLRF 0x05	    ; clear port A
     CLRF 0x07	    ; Clear portC
 		 
 		    
     ;Interrupt setup
-    CLRF 0x0B	    ; Clear INTCON to disable all interrupts by default
-    BSF 0x0B,4	    ; Enable External interrupts
-    BSF 0x0B,7	    ; Enable Global interrups
+    CLRF ADCON0
+    BCF ADCON0,7
+    BSF ADCON0,6	    
+    BSF ADCON0,0
     goto Main
     
 
 Main:
-    MOVLW 0x01		; Put bit 0 high in W
-    XORWF 0x05		; Toggle bit 0 in PortA
+    ; Acquisition Delay that allows sample/hold capacitor to charge
+    NOP
+    NOP
+    NOP
+    NOP
+    NOP
+    NOP
+    
+    ; Start ADC Conversion
+    BANKSEL PORTA
+    BSF PORTA,1     ; Diagnostic HIGH
+    BANKSEL ADCON0
+    BSF ADCON0,1    ; GO/DONE = 1, start conversion
+    
+WaitADC:
+    BTFSC ADCON0,1  ; Is GO/DONE still 1?
+    goto WaitADC    ; Yes -> conversion still running
+
+    ; Conversion Complete
+    BANKSEL PORTA
+    BCF PORTA,1     ; Diagnostic LOW
+
+    ; Display ADRESH on PORTC
+    BANKSEL ADRESH
+    MOVF ADRESH,W
+    BANKSEL PORTC
+    MOVWF PORTC
+
+    ; Display ADRESL on PORTB
+    BANKSEL ADRESL
+    MOVF ADRESL,W
+    BANKSEL PORTB
+    MOVWF PORTB
     goto Main
-    
-ISRHandler:
-    MOVWF W_TEMP	;Copy W to TEMP register
-    SWAPF STATUS,0	;Swap status to be saved into W
-			;Swaps are used because they dont change the status bits
-    MOVWF STATUS_TEMP	;Save status to bank zero STATUS_TEMP register
-    goto InterruptChecks
-    
-InterruptChecks:
-    INCF 0x07,1		; Incremetns PortC
-    BCF 0x0B,1		; Clear the INT flag bit
-    goto LeaveHandler
-    
-LeaveHandler:
-    SWAPF STATUS_TEMP,0	;Swap STATUS_TEMP register into W
-			;(sets bank to original state)
-    MOVWF STATUS	;Move W into STATUS register
-    SWAPF W_TEMP,1	;Swap W_TEMP
-    SWAPF W_TEMP,0	;Swap W_TEMP into W
-    RETFIE		;Return from interupt at point of interruption+1
 End
