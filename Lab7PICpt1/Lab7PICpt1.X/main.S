@@ -39,7 +39,7 @@ ResetVector:
 ; Interrupt Vector at 0004h. Execution starts here after an interrupt.
 PSECT isrVect,class=CODE,delta=2
 InterruptVector:
-    goto ISRHandler
+    goto Main
     
 ; Main code section starts at 0008h. User code goes here
 PSECT code,class=CODE,delta=2
@@ -48,10 +48,9 @@ Setup:
     ; add device setup here
     BSF  0x03, 06   ;
     BSF  0x03, 05   ; Set bank 3 active
-    CLRF ANSEL      ; Clear analog selections
-    CLRF ANSELH     ; Clear high analog selections
+    CLRF ANSEL      ; PortA Digital, set specific measured pins later
+    CLRF ANSELH     ; PortB Digital
     BSF ANSEL,0     ; AN0 / RA0 = analog input
-    
     
     BSF  0x03, 06   ;
     BCF  0x03, 5    ; Set bank 2 active
@@ -67,16 +66,13 @@ Setup:
     BSF ADCON1,7    ; ADFM = 1, right justify result
     BCF ADCON1,5    ; VREF- = VSS
     BCF ADCON1,4    ; VREF+ = VDD
-
 		    
     BCF  0x03, 06   ;
     BCF  0x03, 05   ; Set bank 0 active
     CLRF 0x06	    ; clear port B
     CLRF 0x05	    ; clear port A
-    CLRF 0x07	    ; Clear portC
-		 
+    CLRF 0x07	    ; Clear portC	 
 		    
-    ;Interrupt setup
     CLRF ADCON0
     BCF ADCON0,7
     BSF ADCON0,6	    
