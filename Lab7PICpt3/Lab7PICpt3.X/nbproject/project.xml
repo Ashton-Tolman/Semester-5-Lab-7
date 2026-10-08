@@ -10,6 +10,7 @@
             <make-dep-projects/>
             <sourceRootList>
                 <sourceRootElem>../../Lab7PICpt2/Lab7PICpt2.X</sourceRootElem>
+                <sourceRootElem>.</sourceRootElem>
             </sourceRootList>
             <confList>
                 <confElem>

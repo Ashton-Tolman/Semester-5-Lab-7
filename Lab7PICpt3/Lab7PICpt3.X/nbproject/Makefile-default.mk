@@ -51,17 +51,17 @@ OBJECTDIR=build/${CND_CONF}/${IMAGE_TYPE}
 DISTDIR=dist/${CND_CONF}/${IMAGE_TYPE}
 
 # Source Files Quoted if spaced
-SOURCEFILES_QUOTED_IF_SPACED=../../Lab7PICpt2/Lab7PICpt2.X/main.S
+SOURCEFILES_QUOTED_IF_SPACED=Lab07-Part3-Lookup.S main.S
 
 # Object Files Quoted if spaced
-OBJECTFILES_QUOTED_IF_SPACED=${OBJECTDIR}/_ext/60687047/main.o
-POSSIBLE_DEPFILES=${OBJECTDIR}/_ext/60687047/main.o.d
+OBJECTFILES_QUOTED_IF_SPACED=${OBJECTDIR}/Lab07-Part3-Lookup.o ${OBJECTDIR}/main.o
+POSSIBLE_DEPFILES=${OBJECTDIR}/Lab07-Part3-Lookup.o.d ${OBJECTDIR}/main.o.d
 
 # Object Files
-OBJECTFILES=${OBJECTDIR}/_ext/60687047/main.o
+OBJECTFILES=${OBJECTDIR}/Lab07-Part3-Lookup.o ${OBJECTDIR}/main.o
 
 # Source Files
-SOURCEFILES=../../Lab7PICpt2/Lab7PICpt2.X/main.S
+SOURCEFILES=Lab07-Part3-Lookup.S main.S
 
 
 
@@ -89,22 +89,38 @@ FINAL_IMAGE_NAME_MINUS_EXTENSION=${DISTDIR}/Lab7PICpt3.X.${IMAGE_TYPE}
 # ------------------------------------------------------------------------------------
 # Rules for buildStep: pic-as-assembler
 ifeq ($(TYPE_IMAGE), DEBUG_RUN)
-${OBJECTDIR}/_ext/60687047/main.o: ../../Lab7PICpt2/Lab7PICpt2.X/main.S  nbproject/Makefile-${CND_CONF}.mk 
-	@${MKDIR} "${OBJECTDIR}/_ext/60687047" 
-	@${RM} ${OBJECTDIR}/_ext/60687047/main.o 
+${OBJECTDIR}/Lab07-Part3-Lookup.o: Lab07-Part3-Lookup.S  nbproject/Makefile-${CND_CONF}.mk 
+	@${MKDIR} "${OBJECTDIR}" 
+	@${RM} ${OBJECTDIR}/Lab07-Part3-Lookup.o 
 	${MP_AS} -mcpu=PIC16F883 -c \
-	-o ${OBJECTDIR}/_ext/60687047/main.o \
-	../../Lab7PICpt2/Lab7PICpt2.X/main.S \
-	 -D__DEBUG=1   -mdfp="${DFP_DIR}/xc8"  -msummary=+mem,-psect,-class,-hex,-file,-sha1,-sha256,-xml,-xmlfull -fmax-errors=20 -mwarn=0 -xassembler-with-cpp
+	-o ${OBJECTDIR}/Lab07-Part3-Lookup.o \
+	Lab07-Part3-Lookup.S \
+	 -D__DEBUG=1   -mdfp="${DFP_DIR}/xc8"  -msummary=+mem,-psect,-class,-hex,-file,-sha1,-sha256,-xml,-xmlfull -fmax-errors=20 -mwarn=0 -xassembler-with-cpp -Wl,-presetVect=0000h,-pisrVect=0004h,-pcode=0008h
+	
+${OBJECTDIR}/main.o: main.S  nbproject/Makefile-${CND_CONF}.mk 
+	@${MKDIR} "${OBJECTDIR}" 
+	@${RM} ${OBJECTDIR}/main.o 
+	${MP_AS} -mcpu=PIC16F883 -c \
+	-o ${OBJECTDIR}/main.o \
+	main.S \
+	 -D__DEBUG=1   -mdfp="${DFP_DIR}/xc8"  -msummary=+mem,-psect,-class,-hex,-file,-sha1,-sha256,-xml,-xmlfull -fmax-errors=20 -mwarn=0 -xassembler-with-cpp -Wl,-presetVect=0000h,-pisrVect=0004h,-pcode=0008h
 	
 else
-${OBJECTDIR}/_ext/60687047/main.o: ../../Lab7PICpt2/Lab7PICpt2.X/main.S  nbproject/Makefile-${CND_CONF}.mk 
-	@${MKDIR} "${OBJECTDIR}/_ext/60687047" 
-	@${RM} ${OBJECTDIR}/_ext/60687047/main.o 
+${OBJECTDIR}/Lab07-Part3-Lookup.o: Lab07-Part3-Lookup.S  nbproject/Makefile-${CND_CONF}.mk 
+	@${MKDIR} "${OBJECTDIR}" 
+	@${RM} ${OBJECTDIR}/Lab07-Part3-Lookup.o 
 	${MP_AS} -mcpu=PIC16F883 -c \
-	-o ${OBJECTDIR}/_ext/60687047/main.o \
-	../../Lab7PICpt2/Lab7PICpt2.X/main.S \
-	  -mdfp="${DFP_DIR}/xc8"  -msummary=+mem,-psect,-class,-hex,-file,-sha1,-sha256,-xml,-xmlfull -fmax-errors=20 -mwarn=0 -xassembler-with-cpp
+	-o ${OBJECTDIR}/Lab07-Part3-Lookup.o \
+	Lab07-Part3-Lookup.S \
+	  -mdfp="${DFP_DIR}/xc8"  -msummary=+mem,-psect,-class,-hex,-file,-sha1,-sha256,-xml,-xmlfull -fmax-errors=20 -mwarn=0 -xassembler-with-cpp -Wl,-presetVect=0000h,-pisrVect=0004h,-pcode=0008h
+	
+${OBJECTDIR}/main.o: main.S  nbproject/Makefile-${CND_CONF}.mk 
+	@${MKDIR} "${OBJECTDIR}" 
+	@${RM} ${OBJECTDIR}/main.o 
+	${MP_AS} -mcpu=PIC16F883 -c \
+	-o ${OBJECTDIR}/main.o \
+	main.S \
+	  -mdfp="${DFP_DIR}/xc8"  -msummary=+mem,-psect,-class,-hex,-file,-sha1,-sha256,-xml,-xmlfull -fmax-errors=20 -mwarn=0 -xassembler-with-cpp -Wl,-presetVect=0000h,-pisrVect=0004h,-pcode=0008h
 	
 endif
 
@@ -115,13 +131,13 @@ ${DISTDIR}/Lab7PICpt3.X.${IMAGE_TYPE}.${OUTPUT_SUFFIX}: ${OBJECTFILES}  nbprojec
 	@${MKDIR} ${DISTDIR} 
 	${MP_LD} -mcpu=PIC16F883 ${OBJECTFILES_QUOTED_IF_SPACED} \
 	-o ${DISTDIR}/Lab7PICpt3.X.${IMAGE_TYPE}.${OUTPUT_SUFFIX} \
-	 -D__DEBUG=1   -mdfp="${DFP_DIR}/xc8"  -msummary=+mem,-psect,-class,-hex,-file,-sha1,-sha256,-xml,-xmlfull -mcallgraph=std -Wl,-Map=${FINAL_IMAGE_NAME_MINUS_EXTENSION}.map -mno-download-hex
+	 -D__DEBUG=1   -mdfp="${DFP_DIR}/xc8"  -msummary=+mem,-psect,-class,-hex,-file,-sha1,-sha256,-xml,-xmlfull -mcallgraph=std -Wl,-Map=${FINAL_IMAGE_NAME_MINUS_EXTENSION}.map -mno-download-hex -Wl,-presetVect=0000h,-pisrVect=0004h,-pcode=0008h
 else
 ${DISTDIR}/Lab7PICpt3.X.${IMAGE_TYPE}.${OUTPUT_SUFFIX}: ${OBJECTFILES}  nbproject/Makefile-${CND_CONF}.mk   
 	@${MKDIR} ${DISTDIR} 
 	${MP_LD} -mcpu=PIC16F883 ${OBJECTFILES_QUOTED_IF_SPACED} \
 	-o ${DISTDIR}/Lab7PICpt3.X.${IMAGE_TYPE}.${OUTPUT_SUFFIX} \
-	  -mdfp="${DFP_DIR}/xc8"  -msummary=+mem,-psect,-class,-hex,-file,-sha1,-sha256,-xml,-xmlfull -mcallgraph=std -Wl,-Map=${FINAL_IMAGE_NAME_MINUS_EXTENSION}.map -mno-download-hex
+	  -mdfp="${DFP_DIR}/xc8"  -msummary=+mem,-psect,-class,-hex,-file,-sha1,-sha256,-xml,-xmlfull -mcallgraph=std -Wl,-Map=${FINAL_IMAGE_NAME_MINUS_EXTENSION}.map -mno-download-hex -Wl,-presetVect=0000h,-pisrVect=0004h,-pcode=0008h
 endif
 
 
