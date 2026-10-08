@@ -1,6 +1,6 @@
 // Ashton Tolman
 // RCET3373
-// Lab5PICpt1
+// Lab7PICpt1
 // https://github.com/Ashton-Tolman/Semester-5-Lab-7.git
 // linker code:-Wl,-presetVect=0000h,-pisrVect=0004h,-pcode=0008h
 
