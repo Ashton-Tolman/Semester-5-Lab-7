@@ -55,9 +55,9 @@ PSECT code,class=CODE,delta=2
 
 Setup:
     ; main device setup here
-    BSF 0x03, 06	;
-    BSF 0x03, 05	; Set bank 3 active
-    BSF ANSEL,0		; set RA0 is a analog input pin
+    BSF 0x03, 06	    ;
+    BSF 0x03, 05	    ; Set bank 3 active
+    BSF ANSEL,0		    ; set RA0 is a analog input pin
     CLRF ANSELH
     
     BSF 0x03, 06	    ;
@@ -67,10 +67,10 @@ Setup:
     BCF 0x03, 06	    ;
     BSF 0x03, 05	    ; Set bank 1 active 
     BSF TRISA,0		    ; RA0 is an input - this is where the pot wiper connects
-    BCF TRISA,1		    ; RA1 is an output - this is the wire that goes to the servo
-    BCF ADCON1,7	    ; Left justified results this time
-    BCF ADCON1,4	    ; Top of the ADC's measuring range = VDD
-    BCF ADCON1,5	    ; Bottom of the ADC's measuring range = VSS (ground)
+    BCF TRISC,2		    ; RC2 is an output to the servo for control
+    BCF ADCON1,7	    ; Left justified
+    BCF ADCON1,4	    ; Top of the ADC's measuring range VDD
+    BCF ADCON1,5	    ; Bottom of the ADC's measuring range VSS (ground)
 		    
     BCF 0x03, 06	    ;
     BCF 0x03, 05	    ; Set bank 0 active
@@ -183,6 +183,7 @@ ServiceTimer1:
     BCF     CustomStatus,1  ; Main can now run all code for ADC conversion
     BSF     CustomStatus,0  ; Pulse is now high so set CustomStatus bit
     RETURN
+    
 ServiceCCP1:
     BCF     PIR1,2	    ; Clear the flag
     BCF     PORTC,2	    ; Pulse ends now - servo pin goes LOW
